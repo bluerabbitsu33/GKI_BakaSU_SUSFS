@@ -11,7 +11,7 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      # KernelSU 变体固定为 ReSukiSU
+      # KernelSU 变体固定为 BakaSU
       kernelsu_branch:
         description: "KSU 分支 (main/builtin/自定义commit hash，留空使用默认)"
         required: false
@@ -81,13 +81,18 @@ on:
         required: false
         type: boolean
         default: false
+      use_nomount:
+        description: "启用 NoMount 挂载元模块（需配套模块）"
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       clean_build:
         required: false
         type: boolean
         default: false
-      # KernelSU 变体固定为 ReSukiSU
+      # KernelSU 变体固定为 BakaSU
       kernelsu_branch:
         required: true
         type: string
@@ -130,6 +135,10 @@ on:
         required: false
         type: boolean
         default: false
+      use_nomount:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   prepare-matrix:
@@ -154,7 +163,7 @@ jobs:
       sub_level: ${{ matrix.sub_level }}
       os_patch_level: ${{ matrix.os_patch_level }}
       revision: ${{ matrix.revision || '' }}
-      ksu_variant: ${{ inputs.clean_build && 'Clean' || 'ReSukiSU' }}
+      ksu_variant: ${{ inputs.clean_build && 'Clean' || 'BakaSU' }}
       ksu_branch: ${{ inputs.kernelsu_branch }}
       version: ${{ inputs.version || '' }}
       build_time: ${{ inputs.build_time || '' }}
@@ -166,4 +175,5 @@ jobs:
       enable_susfs: ${{ !inputs.cancel_susfs }}
       droidspaces: ${{ inputs.droidspaces || 'off' }}
       droidspaces_ntsync: ${{ inputs.droidspaces_ntsync || false }}
+      use_nomount: ${{ inputs.use_nomount || false }}
       build_bypass: ${{ inputs.build_bypass || false }}
